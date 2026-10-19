@@ -1,81 +1,109 @@
-# ISLAS PH — Modern Philippine Tour Package Web & Mobile Platform
+<div align="center">
+  <img src="assets/logo.svg" alt="ISLAS PH Logo" width="120" />
+</div>
 
-A modern, high-contrast, minimalist tour package application showcasing premier Philippine destinations (El Nido & Coron Palawan, Boracay, Siargao, Bohol & Cebu, Batanes, and Sagada/Banaue) with interactive Leaflet/OpenStreetMap maps, rich photo galleries, dynamic booking customizations, and full XAMPP MySQL backend support.
+# ISLAS PH
+
+A modern tour package application showcasing premier Philippine destinations. The platform features an interactive Leaflet-based map explorer, comprehensive dynamic booking customization, and dual-client support (web and mobile) backed by a PHP/MySQL REST API.
 
 ---
 
-## 🗂️ Project Structure
+## Table of Contents
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+  - [Backend Setup](#backend-setup)
+  - [Web Application Setup](#web-application-setup)
+  - [Mobile Application Setup](#mobile-application-setup)
+- [Project Structure](#project-structure)
+- [Key Features](#key-features)
 
-```
+---
+
+## Architecture
+
+The project follows a decoupled client-server architecture:
+
+- **Backend**: PHP REST API, MySQL Database (PDO, CORS enabled)
+- **Web Client**: React.js, Vite, Leaflet Maps, custom CSS
+- **Mobile Client**: React Native, Expo
+
+## Prerequisites
+
+Ensure you have the following installed before proceeding:
+- Node.js (v16.0 or higher)
+- npm or yarn
+- XAMPP or an equivalent AMP stack (Apache, MySQL, PHP)
+- Expo Go application (for mobile testing)
+
+---
+
+## Getting Started
+
+### Backend Setup
+
+1. Start **Apache** and **MySQL** via your XAMPP Control Panel.
+2. Navigate to `http://localhost/phpmyadmin/` and create a database named `tour_packages_db`.
+3. Import the initial database schema and seed data located at:
+   `mobileApp/backend/database.sql`
+4. Deploy the API by copying the `mobileApp/backend/` directory into your XAMPP `htdocs` folder (e.g., `C:\xampp\htdocs\backend`).
+
+### Web Application Setup
+
+1. Navigate to the web application directory:
+   ```bash
+   cd web-app
+   ```
+2. Install the required dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+   The application will be available at `http://localhost:5173`.
+
+### Mobile Application Setup
+
+1. Navigate to the mobile application directory:
+   ```bash
+   cd mobile-app
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the Expo development server:
+   ```bash
+   npx expo start
+   ```
+   Press `w` to open in a web browser, or scan the generated QR code with the Expo Go application on your physical device.
+
+---
+
+## Project Structure
+
+```text
 mobileApp/
-├── backend/                  # PHP REST API & MySQL Database for XAMPP
-│   ├── database.sql          # Full database schema and seed data
-│   ├── config.php            # PDO Connection with CORS headers
-│   └── api/
-│       ├── get_packages.php  # Tour packages & hotel accommodations
-│       ├── create_booking.php# Register new tourist bookings
-│       ├── get_bookings.php  # Fetch all reservations
-│       ├── update_booking.php# Modify booking details
-│       └── delete_booking.php# Cancel reservations
-├── web-app/                  # React + Vite Web Application
+├── backend/                  # PHP REST API & MySQL Database
+│   ├── api/                  # Core API Endpoints
+│   ├── config.php            # Database configuration and PDO setup
+│   └── database.sql          # Schema definitions
+├── web-app/                  # React Browser Client
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── PackageCard.jsx
-│   │   │   ├── MapExplorer.jsx       # Leaflet OpenStreetMap Interactive Map
-│   │   │   ├── PackageDetailsModal.jsx # HD Galleries & Day Itineraries
-│   │   │   ├── BookingModal.jsx        # Live pricing & hotel tier customization
-│   │   │   └── BookingsList.jsx        # Search, edit & manage reservations
-│   │   ├── services/api.js             # Dual-mode API (XAMPP + Local fallback)
-│   │   └── index.css                   # Glassmorphic dark high-contrast theme
-└── mobile-app/               # React Native (Expo) Mobile Application
-    └── App.js                # Cross-platform mobile tour & booking experience
+│   │   ├── components/       # Reusable UI components
+│   │   ├── services/         # API integration and local storage fallback
+│   │   └── index.css         # Global styles
+└── mobile-app/               # React Native Client
+    └── App.js                # Application entry point
 ```
 
 ---
 
-## 🚀 Quick Start Guide
+## Key Features
 
-### 1. Setting Up XAMPP & MySQL Database
-1. Open the **XAMPP Control Panel** and start **Apache** and **MySQL**.
-2. Open your browser and go to `http://localhost/phpmyadmin/`.
-3. Create a new database named `tour_packages_db` or import the SQL script directly:
-   - File location: `mobileApp/backend/database.sql`
-4. Copy the `mobileApp/backend/` folder into your XAMPP `htdocs` directory:
-   - Target: `C:\xampp\htdocs\backend` (so it is reachable at `http://localhost/backend/api/get_packages.php`).
-
-*(Note: The React Web and Mobile apps also include automated local storage and embedded fallback data so you can test immediately even before starting XAMPP!)*
-
----
-
-### 2. Running the React Web Application
-```bash
-cd web-app
-npm run dev
-```
-Open your browser at **`http://localhost:5173`**.
-
----
-
-### 3. Running the React Native Mobile Application
-```bash
-cd mobile-app
-npx expo start
-```
-- Press `w` to open in your web browser.
-- Scan the QR code using the **Expo Go** app on your Android or iPhone device.
-
----
-
-## 🌟 Key Features Included
-1. **Interactive Free Leaflet Maps**:
-   - OpenStreetMap tiles with custom markers for Philippine destinations.
-   - Smooth camera fly-to animations and popup previews with one-click booking.
-2. **Comprehensive Booking & Modification Suite**:
-   - Real-time price calculation: `(Base Package × Headcount) + (Hotel Rate × Nights × Rooms)`.
-   - Edit tourist name, contact number, departure date, destination place, nights stayed, tourist headcount, and hotel class.
-   - Live delete / cancellation with safety confirmations.
-3. **Rich Photo Carousel & HD Galleries**:
-   - High-resolution photography for each destination and resort partner.
-4. **State-of-the-Art Aesthetic**:
-   - Dark Obsidian `#090d16` base with Philippine Emerald (`#10b981`) and Palawan Cyan (`#06b6d4`) accents.
+- **Interactive Map Integration**: Native OpenStreetMap tiles with custom markers and programmatic fly-to animations.
+- **Dynamic Booking Engine**: Real-time price calculation combining base package rates with hotel tiers and headcount variables.
+- **Robust State Management**: Comprehensive booking modification suite allowing real-time edits to tourist details, dates, and accommodation tiers.
+- **Graceful Degradation**: Built-in automated local storage fallbacks for immediate testing when the backend API is unreachable.

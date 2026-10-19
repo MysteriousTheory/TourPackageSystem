@@ -1,5 +1,5 @@
 // mobile-app/App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,11 +9,11 @@ import {
   TouchableOpacity,
   TextInput,
   Modal,
-  SafeAreaView,
   StatusBar,
   Alert,
   Dimensions
 } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 
@@ -110,21 +110,53 @@ const PACKAGES = [
 ];
 
 export default function App() {
+  const API_URL = 'http://192.168.1.6/backend/api';
+
   const [activeTab, setActiveTab] = useState('packages'); // 'packages' | 'bookings'
-  const [bookings, setBookings] = useState([
-    {
-      id: 1,
-      booking_code: "BK-PH-9821",
-      tourist_name: "Maria Santos",
-      place: "El Nido & Coron, Palawan",
-      nights_stayed: 4,
-      tourist_quantity: 2,
-      hotel_accommodation: "Seda Lio Luxury Beach Villa",
-      total_amount_php: 55600,
-      booking_date: "2026-11-15",
-      status: "Confirmed"
+  const [packages, setPackages] = useState(PACKAGES);
+  const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    fetchPackages();
+    fetchBookings();
+  }, []);
+
+  const fetchPackages = async () => {
+    try {
+      const res = await fetch(`${API_URL}/get_packages.php`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.status === 'success') {
+          const mappedPackages = json.data.map(pkg => ({
+            ...pkg,
+            price: pkg.base_price_php,
+            image: pkg.featured_image,
+            hotels: pkg.accommodations.map(h => ({
+              name: h.name,
+              price: h.price_per_night_php
+            }))
+          }));
+          setPackages(mappedPackages);
+        }
+      }
+    } catch (e) {
+      console.log('Failed to fetch packages from DB, using fallback.', e);
     }
-  ]);
+  };
+
+  const fetchBookings = async () => {
+    try {
+      const res = await fetch(`${API_URL}/get_bookings.php`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.status === 'success') {
+          setBookings(json.data);
+        }
+      }
+    } catch (e) {
+      console.log('Failed to fetch bookings from DB, using fallback.', e);
+    }
+  };
 
   // Modal states
   const [modalVisible, setModalVisible] = useState(false);
@@ -165,7 +197,7 @@ export default function App() {
     setModalVisible(true);
   };
 
-  const handleSaveBooking = () => {
+  const handleSaveBooking = async () => {
     if (!name.trim() || !phone.trim() || !place.trim()) {
       Alert.alert('Required Fields', 'Please enter your name, phone, and place.');
       return;
@@ -177,35 +209,49 @@ export default function App() {
     const hotelP = selectedHotel ? selectedHotel.price : 0;
     const total = (baseP * qTourist) + (hotelP * nStay * Math.ceil(qTourist / 2));
 
+    const payload = {
+      package_id: selectedPkg ? selectedPkg.id : 1,
+      tourist_name: name,
+      tourist_email: 'guest@example.com', // Optional email
+      tourist_phone: phone,
+      place: place,
+      nights_stayed: nStay,
+      tourist_quantity: qTourist,
+      hotel_accommodation: selectedHotel?.name || 'Standard Resort',
+      hotel_price_per_night: hotelP,
+      package_base_price: baseP,
+      booking_date: bookingDate
+    };
+
     if (editingBookingId) {
-      setBookings(bookings.map(b => b.id === editingBookingId ? {
-        ...b,
-        tourist_name: name,
-        tourist_phone: phone,
-        place: place,
-        nights_stayed: nStay,
-        tourist_quantity: qTourist,
-        hotel_accommodation: selectedHotel?.name || 'Standard Resort',
-        total_amount_php: total,
-        booking_date: bookingDate
-      } : b));
-      Alert.alert('Updated', 'Booking details successfully modified!');
+      payload.id = editingBookingId;
+      try {
+        const res = await fetch(`${API_URL}/update_booking.php`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          fetchBookings();
+          Alert.alert('Updated', 'Booking details successfully modified!');
+        }
+      } catch (e) {
+        console.log(e);
+      }
     } else {
-      const newB = {
-        id: Date.now(),
-        booking_code: `BK-PH-${Math.floor(1000 + Math.random() * 9000)}`,
-        tourist_name: name,
-        tourist_phone: phone,
-        place: place,
-        nights_stayed: nStay,
-        tourist_quantity: qTourist,
-        hotel_accommodation: selectedHotel?.name || 'Standard Resort',
-        total_amount_php: total,
-        booking_date: bookingDate,
-        status: 'Confirmed'
-      };
-      setBookings([newB, ...bookings]);
-      Alert.alert('Success 🎉', `Tour package reserved for ${name}!`);
+      try {
+        const res = await fetch(`${API_URL}/create_booking.php`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          fetchBookings();
+          Alert.alert('Success 🎉', `Tour package reserved for ${name}!`);
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     setModalVisible(false);
@@ -214,15 +260,23 @@ export default function App() {
   const handleDelete = (id) => {
     Alert.alert('Cancel Booking', 'Are you sure you want to cancel this reservation?', [
       { text: 'No' },
-      { text: 'Yes, Cancel', style: 'destructive', onPress: () => {
-        setBookings(bookings.filter(b => b.id !== id));
+      { text: 'Yes, Cancel', style: 'destructive', onPress: async () => {
+        try {
+          const res = await fetch(`${API_URL}/delete_booking.php?id=${id}`);
+          if (res.ok) {
+            fetchBookings();
+          }
+        } catch(e) {
+          console.log(e);
+        }
       }}
     ]);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fdfdfd" />
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#fdfdfd" />
 
       {/* Header */}
       <View style={styles.header}>
@@ -253,7 +307,7 @@ export default function App() {
         {activeTab === 'packages' ? (
           <View>
             <Text style={styles.sectionHeading}>Curated Destinations</Text>
-            {PACKAGES.map((pkg) => (
+            {packages.map((pkg) => (
               <View key={pkg.id} style={styles.card}>
                 <Image source={{ uri: pkg.image }} style={styles.cardImage} />
                 <View style={styles.cardOverlay}>
@@ -439,6 +493,7 @@ export default function App() {
         </View>
       </Modal>
     </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

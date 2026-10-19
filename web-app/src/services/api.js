@@ -1,7 +1,7 @@
 // web-app/src/services/api.js
 import { INITIAL_PACKAGES, INITIAL_BOOKINGS } from '../data/fallbackPackages';
-
-const API_BASE_URL = 'http://localhost/backend/api';
+// Configurable API URL for production deployment (e.g. Vercel) with fallback to local XAMPP
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost/backend/api').replace(/\/+$/, '');
 
 // Local storage key for offline/demo persistence when XAMPP is not actively serving
 const STORAGE_PACKAGES_KEY = 'ph_tour_packages_v1';

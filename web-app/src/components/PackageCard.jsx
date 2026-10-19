@@ -8,7 +8,7 @@ export default function PackageCard({ pkg, onSelectPackage, onBookNow, onOpenMap
   const gallery = pkg.gallery && pkg.gallery.length > 0 ? pkg.gallery : [pkg.featured_image];
 
   return (
-    <div 
+    <div
       className="glass-panel"
       style={{
         overflow: 'hidden',
@@ -32,8 +32,8 @@ export default function PackageCard({ pkg, onSelectPackage, onBookNow, onOpenMap
     >
       {/* Image Gallery Header */}
       <div style={{ position: 'relative', height: '240px', overflow: 'hidden' }}>
-        <img 
-          src={gallery[activePhotoIdx]} 
+        <img
+          src={gallery[activePhotoIdx]}
           alt={pkg.title}
           style={{
             width: '100%',
@@ -93,7 +93,7 @@ export default function PackageCard({ pkg, onSelectPackage, onBookNow, onOpenMap
 
         {/* Thumbnail Preview Selector */}
         {gallery.length > 1 && (
-          <div 
+          <div
             style={{
               position: 'absolute',
               bottom: '0.75rem',
@@ -180,7 +180,7 @@ export default function PackageCard({ pkg, onSelectPackage, onBookNow, onOpenMap
           marginBottom: '1.25rem'
         }}>
           {pkg.highlights?.slice(0, 2).map((hl, i) => (
-            <span 
+            <span
               key={i}
               style={{
                 fontSize: '0.72rem',

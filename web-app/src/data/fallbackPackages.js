@@ -15,9 +15,9 @@ export const INITIAL_PACKAGES = [
     reviews_count: 482,
     latitude: 11.1955,
     longitude: 119.4124,
-    featured_image: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=1200&q=80",
+    featured_image: "/destinations/Palawan.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=1200&q=80",
+      "/destinations/Palawan.jpg",
       "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1534008897995-27a23e859048?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80"
@@ -78,9 +78,9 @@ export const INITIAL_PACKAGES = [
     reviews_count: 620,
     latitude: 11.9674,
     longitude: 121.9248,
-    featured_image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+    featured_image: "/destinations/Aklan.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "/destinations/Aklan.jpg",
       "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80"
     ],
@@ -139,9 +139,9 @@ export const INITIAL_PACKAGES = [
     reviews_count: 389,
     latitude: 9.7877,
     longitude: 126.1557,
-    featured_image: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=80",
+    featured_image: "/destinations/Surigao del Norte.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=80",
+      "/destinations/Surigao del Norte.jpg",
       "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1200&q=80"
     ],
